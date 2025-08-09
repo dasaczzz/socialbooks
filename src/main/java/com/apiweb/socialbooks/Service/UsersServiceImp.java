@@ -7,6 +7,8 @@ import com.apiweb.socialbooks.Repository.UserRepository;
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -34,22 +36,22 @@ public class UsersServiceImp implements IUsersService {
     }
 
     @Override
-    public UsersModel getUserById(String id) {
-        return null;
-    }
-
-    @Override
-    public List<UserProfilesView> getUserProfiles() {
-        return List.of();
-    }
+    public UsersModel getUserById(ObjectId id) { return usersRepository.findById(id).orElse(null); }
 
     @Override
     public String deleteUser(ObjectId id) {
-        return "";
+        usersRepository.deleteById(id);
+        return String.format("The user with id %s has been deleted successfully", id);
     }
 
     @Override
-    public String deleteUserFromFriends(ObjectId id) {
-        return "";
+    public List<UserProfilesView> getUserProfiles() { return userProfilesRepository.findAll(); }
+
+    @Override
+    public String deleteUserFromFriendLists(ObjectId id) {
+        Query query = new Query();
+        Update update = new Update().pull("friends", id);
+        mongoTemplate.updateMulti(query, update, "Users");
+        return String.format("The user with id %s has been removed from friendlists", id);
     }
 }

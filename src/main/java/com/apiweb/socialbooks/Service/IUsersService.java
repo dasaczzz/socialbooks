@@ -9,8 +9,8 @@ import java.util.List;
 public interface IUsersService {
     String createUser(UsersModel user);
     List<UsersModel> getUsers();
-    UsersModel getUserById(String id);
-    List<UserProfilesView> getUserProfiles();
+    UsersModel getUserById(ObjectId id);
     String deleteUser(ObjectId id);
-    String deleteUserFromFriends(ObjectId id);
+    List<UserProfilesView> getUserProfiles();
+    String deleteUserFromFriendLists(ObjectId id);
 }
