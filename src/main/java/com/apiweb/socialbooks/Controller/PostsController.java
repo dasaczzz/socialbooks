@@ -25,12 +25,12 @@ public class PostsController implements BaseController<PostsModel> {
     @PostMapping ("/")
     public ResponseEntity<String> createRecord(@RequestBody PostsModel post) {
         try {
-            UsersModel user = usersService.getUserById(post.getUserId());
+            UsersModel user = usersService.getRecordById(post.getUserId());
             if (user == null) {
                 throw new ResourceNotFound(String.format("Error creating post. The user with id %s was not found", post.getUserId()));
             }
 
-            return new ResponseEntity<>(postsService.createPost(post), HttpStatus.CREATED);
+            return new ResponseEntity<>(postsService.createRecord(post), HttpStatus.CREATED);
         } catch (ResourceNotFound e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
         }
@@ -38,7 +38,7 @@ public class PostsController implements BaseController<PostsModel> {
 
     @GetMapping("/")
     public ResponseEntity<List<PostsModel>> getRecords() {
-        return new ResponseEntity<>(postsService.getPosts(), HttpStatus.OK);
+        return new ResponseEntity<>(postsService.getRecords(), HttpStatus.OK);
     }
 
     @GetMapping("/{id}")
@@ -55,7 +55,7 @@ public class PostsController implements BaseController<PostsModel> {
     public ResponseEntity<String> deleteRecord(@PathVariable String id) {
         try {
             PostsModel postFound = validateId(id);
-            return new ResponseEntity<>(postsService.deletePost(postFound.getId()), HttpStatus.OK);
+            return new ResponseEntity<>(postsService.deleteRecord(postFound.getId()), HttpStatus.OK);
         } catch(ResourceNotFound e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
         }
@@ -65,7 +65,7 @@ public class PostsController implements BaseController<PostsModel> {
         if (!ObjectId.isValid(id)){
             throw new ResourceNotFound(String.format("Post with id %s was not found", id));
         }
-        PostsModel post = postsService.getPostById(new ObjectId(id));
+        PostsModel post = postsService.getRecordById(new ObjectId(id));
         if (post == null) {
             throw new ResourceNotFound(String.format("Post with id %s was not found", id));
         }

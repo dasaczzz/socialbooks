@@ -25,12 +25,12 @@ public class UsersController implements BaseController<UsersModel> {
     public ResponseEntity<String> createRecord(@RequestBody UsersModel user) {
         List<ObjectId> validFriends = validateFriends(user.getFriends());
         user.setFriends(validFriends);
-        return new ResponseEntity<>(usersService.createUser(user), HttpStatus.CREATED);
+        return new ResponseEntity<>(usersService.createRecord(user), HttpStatus.CREATED);
     }
 
     @GetMapping("/")
     public ResponseEntity<List<UsersModel>> getRecords() {
-        return new ResponseEntity<>(usersService.getUsers(), HttpStatus.OK);
+        return new ResponseEntity<>(usersService.getRecords(), HttpStatus.OK);
     }
 
     @GetMapping("/{id}")
@@ -48,7 +48,7 @@ public class UsersController implements BaseController<UsersModel> {
         try {
             UsersModel userFound = validateId(id);
             String confirmation = usersService.deleteUserFromFriendLists(userFound.getId());
-            String deletedUser = usersService.deleteUser(userFound.getId());
+            String deletedUser = usersService.deleteRecord(userFound.getId());
             String finalString = confirmation + "\n" + deletedUser;
             return new ResponseEntity<>(finalString, HttpStatus.OK);
         } catch (ResourceNotFound e) {
@@ -65,7 +65,7 @@ public class UsersController implements BaseController<UsersModel> {
         if(!ObjectId.isValid(id)) {
             throw new ResourceNotFound(String.format("The user with id %s has not been found", id));
         }
-        UsersModel user = usersService.getUserById(new ObjectId(id));
+        UsersModel user = usersService.getRecordById(new ObjectId(id));
         if (user == null) {
             throw new ResourceNotFound(String.format("The user with id %s has not been found", id));
         }
@@ -78,7 +78,7 @@ public class UsersController implements BaseController<UsersModel> {
             return List.of();
         }
         for (ObjectId id : idList) {
-            UsersModel amigo = usersService.getUserById(id);
+            UsersModel amigo = usersService.getRecordById(id);
             if (amigo != null) {
                 validFriends.add(id);
             }
