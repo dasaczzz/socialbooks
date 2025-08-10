@@ -1,11 +1,11 @@
 package com.apiweb.socialbooks.Controller;
 
 import com.apiweb.socialbooks.Exception.ResourceNotFound;
+import com.apiweb.socialbooks.Lib.Utils;
 import com.apiweb.socialbooks.Model.UserProfilesView;
 import com.apiweb.socialbooks.Model.UsersModel;
 import com.apiweb.socialbooks.Service.IUsersService;
 import org.bson.types.ObjectId;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -18,8 +18,13 @@ import java.util.Set;
 @RestController
 @RequestMapping("/apiweb/users")
 public class UsersController implements BaseController<UsersModel> {
-    @Autowired
-    IUsersService usersService;
+
+    //  --------- Dependency injection ------------------
+    final IUsersService usersService;
+
+    public UsersController(IUsersService usersService) {
+        this.usersService = usersService;
+    }
 
     @PostMapping("/")
     public ResponseEntity<String> createRecord(@RequestBody UsersModel user) {
@@ -36,7 +41,7 @@ public class UsersController implements BaseController<UsersModel> {
     @GetMapping("/{id}")
     public ResponseEntity<?> getRecordById(@PathVariable String id) {
         try {
-            UsersModel userFound = validateId(id);
+            UsersModel userFound = Utils.validateRecord(id, usersService);
             return new ResponseEntity<>(userFound, HttpStatus.OK);
         } catch (ResourceNotFound e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
@@ -46,7 +51,7 @@ public class UsersController implements BaseController<UsersModel> {
     @DeleteMapping("/{id}")
     public ResponseEntity<String> deleteRecord(@PathVariable String id) {
         try {
-            UsersModel userFound = validateId(id);
+            UsersModel userFound = Utils.validateRecord(id, usersService);
             String confirmation = usersService.deleteUserFromFriendLists(userFound.getId());
             String deletedUser = usersService.deleteRecord(userFound.getId());
             String finalString = confirmation + "\n" + deletedUser;
@@ -61,16 +66,6 @@ public class UsersController implements BaseController<UsersModel> {
         return new ResponseEntity<>(usersService.getUserProfiles(), HttpStatus.OK);
     }
 
-    private UsersModel validateId(String id) throws ResourceNotFound {
-        if(!ObjectId.isValid(id)) {
-            throw new ResourceNotFound(String.format("The user with id %s has not been found", id));
-        }
-        UsersModel user = usersService.getRecordById(new ObjectId(id));
-        if (user == null) {
-            throw new ResourceNotFound(String.format("The user with id %s has not been found", id));
-        }
-        return user;
-    }
 
     private List<ObjectId> validateFriends(List<ObjectId> idList) {
         List<ObjectId> validFriends = new ArrayList<>();

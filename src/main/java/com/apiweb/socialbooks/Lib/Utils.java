@@ -1,18 +1,19 @@
 package com.apiweb.socialbooks.Lib;
 
 import com.apiweb.socialbooks.Exception.ResourceNotFound;
-import com.apiweb.socialbooks.Model.UsersModel;
+import com.apiweb.socialbooks.Model.BaseModel;
+import com.apiweb.socialbooks.Service.BaseService;
 import org.bson.types.ObjectId;
 
 public class Utils {
-    public static String validateRecord(String id) throws ResourceNotFound {
+    public static <T extends BaseModel> T validateRecord(String id, BaseService<T> service) throws ResourceNotFound {
         if(!ObjectId.isValid(id)) {
-            throw new ResourceNotFound(String.format("The user with id %s has not been found", id));
+            throw new ResourceNotFound(String.format("The %s with id %s has not been found", service.getRecordType(), id));
         }
-//        T user = usersService.getUserById(new ObjectId(id));
-//        if (user == null) {
-//            throw new ResourceNotFound(String.format("The user with id %s has not been found", id));
-//        }
-        return id;
+        T record = service.getRecordById(new ObjectId(id));
+        if (record == null) {
+            throw new ResourceNotFound(String.format("The %s with id %s has not been found", service.getRecordType(), id));
+        }
+        return record;
     }
 }

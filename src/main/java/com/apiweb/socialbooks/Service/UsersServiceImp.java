@@ -5,7 +5,6 @@ import com.apiweb.socialbooks.Model.UsersModel;
 import com.apiweb.socialbooks.Repository.UserProfilesRepository;
 import com.apiweb.socialbooks.Repository.UserRepository;
 import org.bson.types.ObjectId;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
@@ -15,19 +14,27 @@ import java.util.List;
 
 @Service
 public class UsersServiceImp implements IUsersService {
-    @Autowired
-    UserRepository usersRepository;
 
-    @Autowired
-    MongoTemplate mongoTemplate;
+    //  --------- Dependency injection ------------------
+    final UserRepository usersRepository;
+    final MongoTemplate mongoTemplate;
+    final UserProfilesRepository  userProfilesRepository;
 
-    @Autowired
-    UserProfilesRepository  userProfilesRepository;
+    public UsersServiceImp(UserRepository usersRepository, MongoTemplate mongoTemplate, UserProfilesRepository userProfilesRepository) {
+        this.usersRepository = usersRepository;
+        this.mongoTemplate = mongoTemplate;
+        this.userProfilesRepository = userProfilesRepository;
+    }
 
     @Override
-    public String createRecord(UsersModel usuario) {
-        usersRepository.save(usuario);
-        return String.format("The user %s with the id %s has been created successfully", usuario.getFullName(), usuario.getId());
+    public String getRecordType() {
+        return "user";
+    }
+
+    @Override
+    public String createRecord(UsersModel user) {
+        usersRepository.save(user);
+        return String.format("The user %s with the id %s has been created successfully", user.getFullName(), user.getId());
     }
 
     @Override

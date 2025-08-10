@@ -11,8 +11,14 @@ import java.util.List;
 
 @Service
 public class PostsServiceImp implements IPostsService {
-    @Autowired
-    PostsRepository postsRepository;
+
+    //  --------- Dependency injection ------------------
+    final PostsRepository postsRepository;
+
+    public PostsServiceImp(PostsRepository postsRepository) { this.postsRepository = postsRepository; }
+
+    @Override
+    public String getRecordType() { return "post"; }
 
     @Override
     public String createRecord(PostsModel post) {

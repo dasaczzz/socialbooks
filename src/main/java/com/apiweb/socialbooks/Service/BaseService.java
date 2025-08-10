@@ -6,6 +6,7 @@ import org.bson.types.ObjectId;
 import java.util.List;
 
 public interface BaseService<T extends BaseModel> {
+    String getRecordType();
     String createRecord(T record);
     List<T> getRecords();
     T getRecordById(ObjectId id);
