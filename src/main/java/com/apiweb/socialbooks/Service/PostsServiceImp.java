@@ -15,19 +15,19 @@ public class PostsServiceImp implements IPostsService {
     PostsRepository postsRepository;
 
     @Override
-    public String createPost(PostsModel post) {
+    public String createRecord(PostsModel post) {
         postsRepository.save(post);
         return String.format("The post with id %s has been created successfully", post.getId());
     }
 
     @Override
-    public List<PostsModel> getPosts() { return postsRepository.findAll(); }
+    public List<PostsModel> getRecords() { return postsRepository.findAll(); }
 
     @Override
-    public PostsModel getPostById(ObjectId id) { return postsRepository.findById(id).orElse(null); }
+    public PostsModel getRecordById(ObjectId id) { return postsRepository.findById(id).orElse(null); }
 
     @Override
-    public String deletePost(ObjectId id) {
+    public String deleteRecord(ObjectId id) {
         postsRepository.deleteById(id);
         return String.format("The post with id %s has been deleted successfully", id);
     }

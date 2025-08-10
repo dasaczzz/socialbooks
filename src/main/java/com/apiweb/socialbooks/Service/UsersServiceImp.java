@@ -25,21 +25,21 @@ public class UsersServiceImp implements IUsersService {
     UserProfilesRepository  userProfilesRepository;
 
     @Override
-    public String createUser(UsersModel usuario) {
+    public String createRecord(UsersModel usuario) {
         usersRepository.save(usuario);
         return String.format("The user %s with the id %s has been created successfully", usuario.getFullName(), usuario.getId());
     }
 
     @Override
-    public List<UsersModel> getUsers() {
+    public List<UsersModel> getRecords() {
         return usersRepository.findAll();
     }
 
     @Override
-    public UsersModel getUserById(ObjectId id) { return usersRepository.findById(id).orElse(null); }
+    public UsersModel getRecordById(ObjectId id) { return usersRepository.findById(id).orElse(null); }
 
     @Override
-    public String deleteUser(ObjectId id) {
+    public String deleteRecord(ObjectId id) {
         usersRepository.deleteById(id);
         return String.format("The user with id %s has been deleted successfully", id);
     }
