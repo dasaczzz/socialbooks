@@ -6,16 +6,13 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.bson.types.ObjectId;
-import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 @Document("Posts")
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class PostsModel {
-    @Id
-    private ObjectId id;
+public class PostsModel extends BaseModel {
     private ObjectId userId;
     private String title;
     private String author;
@@ -23,13 +20,6 @@ public class PostsModel {
     private BookState condition;
     private String coverImage;
 
-    @JsonProperty("id")
-    public String getIdAsString() {
-        return id != null ? id.toHexString() : null;
-    }
-
     @JsonProperty("userId")
-    public String getUserIdAsString() {
-        return userId != null ? userId.toHexString() : null;
-    }
+    public String getUserIdAsString() { return userId != null ? userId.toHexString() : null; }
 }

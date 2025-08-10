@@ -16,20 +16,13 @@ import java.util.stream.Collectors;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class UsersModel {
-    @Id
-    private ObjectId id;
+public class UsersModel extends BaseModel {
     private String fullName;
     private UserAddress address;
     private String profilePicture;
     private String description;
     private UserCredentials credentials;
     private List<ObjectId> friends = new ArrayList<>();
-
-    @JsonProperty("id")
-    public String getIdAsString() {
-        return id != null ? id.toHexString() : null;
-    }
 
     @JsonProperty("friends")
     public List<String> getAmigosAsString() {
