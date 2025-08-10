@@ -4,7 +4,6 @@ import com.apiweb.socialbooks.DTO.UserPostsDTO;
 import com.apiweb.socialbooks.Model.PostsModel;
 import com.apiweb.socialbooks.Repository.PostsRepository;
 import org.bson.types.ObjectId;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
