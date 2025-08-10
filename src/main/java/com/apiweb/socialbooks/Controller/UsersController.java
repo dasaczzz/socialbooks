@@ -17,24 +17,24 @@ import java.util.Set;
 
 @RestController
 @RequestMapping("/apiweb/users")
-public class UsersController {
+public class UsersController implements BaseController<UsersModel> {
     @Autowired
     IUsersService usersService;
 
     @PostMapping("/")
-    public ResponseEntity<String> createUser(@RequestBody UsersModel user) {
+    public ResponseEntity<String> createRecord(@RequestBody UsersModel user) {
         List<ObjectId> validFriends = validateFriends(user.getFriends());
         user.setFriends(validFriends);
         return new ResponseEntity<>(usersService.createUser(user), HttpStatus.CREATED);
     }
 
     @GetMapping("/")
-    public ResponseEntity<List<UsersModel>> getUsers() {
+    public ResponseEntity<List<UsersModel>> getRecords() {
         return new ResponseEntity<>(usersService.getUsers(), HttpStatus.OK);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<?> getUserById(@PathVariable String id) {
+    public ResponseEntity<?> getRecordById(@PathVariable String id) {
         try {
             UsersModel userFound = validateId(id);
             return new ResponseEntity<>(userFound, HttpStatus.OK);
@@ -44,7 +44,7 @@ public class UsersController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<String> deleteUser(@PathVariable String id) {
+    public ResponseEntity<String> deleteRecord(@PathVariable String id) {
         try {
             UsersModel userFound = validateId(id);
             String confirmation = usersService.deleteUserFromFriendLists(userFound.getId());
