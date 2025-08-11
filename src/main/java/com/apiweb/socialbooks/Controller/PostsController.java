@@ -1,10 +1,8 @@
 package com.apiweb.socialbooks.Controller;
 
-import com.apiweb.socialbooks.Exception.ResourceNotFound;
 import com.apiweb.socialbooks.Lib.BaseResponse;
 import com.apiweb.socialbooks.Lib.Utils;
 import com.apiweb.socialbooks.Model.PostsModel;
-import com.apiweb.socialbooks.Model.UsersModel;
 import com.apiweb.socialbooks.Service.IPostsService;
 import com.apiweb.socialbooks.Service.IUsersService;
 import org.springframework.http.HttpStatus;
@@ -27,13 +25,9 @@ public class PostsController implements BaseController<PostsModel> {
     }
     // --------------------------------------------------
 
-
     @PostMapping ("/")
     public ResponseEntity<BaseResponse> createRecord(@RequestBody PostsModel post) {
-        UsersModel user = usersService.getRecordById(post.getUserId());
-        if (user == null) {
-            throw new ResourceNotFound(String.format("Error creating post. The user with id %s was not found", post.getUserId()));
-        }
+        Utils.validateEntryId(post.getUserIdAsString(), usersService);
         return new ResponseEntity<>(postsService.createRecord(post), HttpStatus.CREATED);
     }
 
@@ -51,7 +45,7 @@ public class PostsController implements BaseController<PostsModel> {
     @DeleteMapping("/{id}")
     public ResponseEntity<BaseResponse> deleteRecord(@PathVariable String id) {
         PostsModel postFound = Utils.validateEntryId(id, postsService);
-        return new ResponseEntity<>(postsService.deleteRecord(postFound.getId()), HttpStatus.OK);
+        return new ResponseEntity<>(postsService.deleteRecord(postFound.getId()), HttpStatus.NO_CONTENT);
     }
 
 }
