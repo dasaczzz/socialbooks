@@ -1,6 +1,6 @@
 package com.apiweb.socialbooks.Controller;
 
-import com.apiweb.socialbooks.Exception.ResourceNotFound;
+import com.apiweb.socialbooks.Lib.BaseResponse;
 import com.apiweb.socialbooks.Lib.Utils;
 import com.apiweb.socialbooks.Model.UserProfilesView;
 import com.apiweb.socialbooks.Model.UsersModel;
@@ -28,7 +28,7 @@ public class UsersController implements BaseController<UsersModel> {
     // --------------------------------------------------
 
     @PostMapping("/")
-    public ResponseEntity<String> createRecord(@RequestBody UsersModel user) {
+    public ResponseEntity<BaseResponse> createRecord(@RequestBody UsersModel user) {
         List<ObjectId> validFriends = validateFriends(user.getFriends());
         user.setFriends(validFriends);
         return new ResponseEntity<>(usersService.createRecord(user), HttpStatus.CREATED);
@@ -46,19 +46,15 @@ public class UsersController implements BaseController<UsersModel> {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<String> deleteRecord(@PathVariable String id) {
+    public ResponseEntity<BaseResponse> deleteRecord(@PathVariable String id) {
         UsersModel userFound = Utils.validateEntryId(id, usersService);
-        String confirmation = usersService.deleteUserFromFriendLists(userFound.getId());
-        String deletedUser = usersService.deleteRecord(userFound.getId());
-        String finalString = confirmation + "\n" + deletedUser;
-        return new ResponseEntity<>(finalString, HttpStatus.OK);
+        return new ResponseEntity<>(usersService.deleteRecord(userFound.getId()), HttpStatus.OK);
     }
 
     @GetMapping("/profiles")
     public ResponseEntity<List<UserProfilesView>> getUserProfiles() {
         return new ResponseEntity<>(usersService.getUserProfiles(), HttpStatus.OK);
     }
-
 
     private List<ObjectId> validateFriends(List<ObjectId> idList) {
         List<ObjectId> validFriends = new ArrayList<>();
