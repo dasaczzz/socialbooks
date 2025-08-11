@@ -15,6 +15,7 @@ public class PostsServiceImp implements IPostsService {
     final PostsRepository postsRepository;
 
     public PostsServiceImp(PostsRepository postsRepository) { this.postsRepository = postsRepository; }
+    // --------------------------------------------------
 
     @Override
     public String getRecordType() { return "post"; }

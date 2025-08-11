@@ -25,6 +25,7 @@ public class UsersServiceImp implements IUsersService {
         this.mongoTemplate = mongoTemplate;
         this.userProfilesRepository = userProfilesRepository;
     }
+    // --------------------------------------------------
 
     @Override
     public String getRecordType() {
