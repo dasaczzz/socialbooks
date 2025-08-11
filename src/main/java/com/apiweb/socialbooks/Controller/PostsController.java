@@ -24,19 +24,16 @@ public class PostsController implements BaseController<PostsModel> {
         this.postsService = postsService;
         this.usersService = usersService;
     }
+    // --------------------------------------------------
+
 
     @PostMapping ("/")
     public ResponseEntity<String> createRecord(@RequestBody PostsModel post) {
-        try {
-            UsersModel user = usersService.getRecordById(post.getUserId());
-            if (user == null) {
-                throw new ResourceNotFound(String.format("Error creating post. The user with id %s was not found", post.getUserId()));
-            }
-
-            return new ResponseEntity<>(postsService.createRecord(post), HttpStatus.CREATED);
-        } catch (ResourceNotFound e) {
-            return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
+        UsersModel user = usersService.getRecordById(post.getUserId());
+        if (user == null) {
+            throw new ResourceNotFound(String.format("Error creating post. The user with id %s was not found", post.getUserId()));
         }
+        return new ResponseEntity<>(postsService.createRecord(post), HttpStatus.CREATED);
     }
 
     @GetMapping("/")
@@ -46,22 +43,14 @@ public class PostsController implements BaseController<PostsModel> {
 
     @GetMapping("/{id}")
     public ResponseEntity<?> getRecordById(@PathVariable String id) {
-        try {
-            PostsModel postFound = Utils.validateRecord(id, postsService);
-            return new ResponseEntity<>(postFound, HttpStatus.OK);
-        } catch (ResourceNotFound e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
-        }
+        PostsModel postFound = Utils.validateEntryId(id, postsService);
+        return new ResponseEntity<>(postFound, HttpStatus.OK);
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<String> deleteRecord(@PathVariable String id) {
-        try {
-            PostsModel postFound = Utils.validateRecord(id, postsService);
-            return new ResponseEntity<>(postsService.deleteRecord(postFound.getId()), HttpStatus.OK);
-        } catch(ResourceNotFound e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
-        }
+        PostsModel postFound = Utils.validateEntryId(id, postsService);
+        return new ResponseEntity<>(postsService.deleteRecord(postFound.getId()), HttpStatus.OK);
     }
 
 }

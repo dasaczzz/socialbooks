@@ -25,6 +25,7 @@ public class UsersController implements BaseController<UsersModel> {
     public UsersController(IUsersService usersService) {
         this.usersService = usersService;
     }
+    // --------------------------------------------------
 
     @PostMapping("/")
     public ResponseEntity<String> createRecord(@RequestBody UsersModel user) {
@@ -39,26 +40,18 @@ public class UsersController implements BaseController<UsersModel> {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<?> getRecordById(@PathVariable String id) {
-        try {
-            UsersModel userFound = Utils.validateRecord(id, usersService);
-            return new ResponseEntity<>(userFound, HttpStatus.OK);
-        } catch (ResourceNotFound e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
-        }
+    public ResponseEntity<UsersModel> getRecordById(@PathVariable String id) {
+        UsersModel userFound = Utils.validateEntryId(id, usersService);
+        return new ResponseEntity<>(userFound, HttpStatus.OK);
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<String> deleteRecord(@PathVariable String id) {
-        try {
-            UsersModel userFound = Utils.validateRecord(id, usersService);
-            String confirmation = usersService.deleteUserFromFriendLists(userFound.getId());
-            String deletedUser = usersService.deleteRecord(userFound.getId());
-            String finalString = confirmation + "\n" + deletedUser;
-            return new ResponseEntity<>(finalString, HttpStatus.OK);
-        } catch (ResourceNotFound e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
-        }
+        UsersModel userFound = Utils.validateEntryId(id, usersService);
+        String confirmation = usersService.deleteUserFromFriendLists(userFound.getId());
+        String deletedUser = usersService.deleteRecord(userFound.getId());
+        String finalString = confirmation + "\n" + deletedUser;
+        return new ResponseEntity<>(finalString, HttpStatus.OK);
     }
 
     @GetMapping("/profiles")
