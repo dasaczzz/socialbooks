@@ -1,5 +1,6 @@
 package com.apiweb.socialbooks.Service;
 
+import com.apiweb.socialbooks.Lib.BaseResponse;
 import com.apiweb.socialbooks.Model.UserProfilesView;
 import com.apiweb.socialbooks.Model.UsersModel;
 import com.apiweb.socialbooks.Repository.UserProfilesRepository;
@@ -8,6 +9,7 @@ import org.bson.types.ObjectId;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -28,14 +30,17 @@ public class UsersServiceImp implements IUsersService {
     // --------------------------------------------------
 
     @Override
-    public String getRecordType() {
-        return "user";
-    }
+    public String getRecordType() { return "user"; }
 
     @Override
-    public String createRecord(UsersModel user) {
+    public BaseResponse createRecord(UsersModel user) {
         usersRepository.save(user);
-        return String.format("The user %s with the id %s has been created successfully", user.getFullName(), user.getId());
+        return new BaseResponse(
+                HttpStatus.CREATED.value(),
+                String.format("The user %s with the id %s has been created successfully", user.getFullName(), user.getId()),
+                "POST",
+                "/apiweb/users/"
+        );
     }
 
     @Override
@@ -47,19 +52,23 @@ public class UsersServiceImp implements IUsersService {
     public UsersModel getRecordById(ObjectId id) { return usersRepository.findById(id).orElse(null); }
 
     @Override
-    public String deleteRecord(ObjectId id) {
+    public BaseResponse deleteRecord(ObjectId id) {
         usersRepository.deleteById(id);
-        return String.format("The user with id %s has been deleted successfully", id);
+        deleteUserFromFriendLists(id);
+        return new BaseResponse(
+                HttpStatus.NO_CONTENT.value(),
+                String.format("The user with id %s has been deleted successfully", id),
+                "DELETE",
+                String.format("/apiweb/users/%s", id)
+        );
     }
 
     @Override
     public List<UserProfilesView> getUserProfiles() { return userProfilesRepository.findAll(); }
 
-    @Override
-    public String deleteUserFromFriendLists(ObjectId id) {
+    private void deleteUserFromFriendLists(ObjectId id) {
         Query query = new Query();
         Update update = new Update().pull("friends", id);
         mongoTemplate.updateMulti(query, update, "Users");
-        return String.format("The user with id %s has been removed from friendlists", id);
     }
 }
