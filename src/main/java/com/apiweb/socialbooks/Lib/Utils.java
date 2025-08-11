@@ -5,8 +5,11 @@ import com.apiweb.socialbooks.Model.BaseModel;
 import com.apiweb.socialbooks.Service.BaseService;
 import org.bson.types.ObjectId;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+
 public class Utils {
-    public static <T extends BaseModel> T validateRecord(String id, BaseService<T> service) throws ResourceNotFound {
+    public static <T extends BaseModel> T validateEntryId(String id, BaseService<T> service) throws ResourceNotFound {
         if(!ObjectId.isValid(id)) {
             throw new ResourceNotFound(String.format("The %s with id %s has not been found", service.getRecordType(), id));
         }
@@ -15,5 +18,10 @@ public class Utils {
             throw new ResourceNotFound(String.format("The %s with id %s has not been found", service.getRecordType(), id));
         }
         return record;
+    }
+
+    public static String getLocalDateTime() {
+        DateTimeFormatter format = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");
+        return LocalDateTime.now().format(format);
     }
 }
