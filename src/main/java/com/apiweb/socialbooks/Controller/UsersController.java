@@ -48,7 +48,7 @@ public class UsersController implements BaseController<UsersModel> {
     @DeleteMapping("/{id}")
     public ResponseEntity<BaseResponse> deleteRecord(@PathVariable String id) {
         UsersModel userFound = Utils.validateEntryId(id, usersService);
-        return new ResponseEntity<>(usersService.deleteRecord(userFound.getId()), HttpStatus.OK);
+        return new ResponseEntity<>(usersService.deleteRecord(userFound.getId()), HttpStatus.NO_CONTENT);
     }
 
     @GetMapping("/profiles")
